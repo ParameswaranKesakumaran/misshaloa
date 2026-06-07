@@ -99,7 +99,7 @@ const PRODUCTS: Product[] = [
     id: 'crunchy-paws',
     name: 'Crunchy Paws',
     description: 'Dehydrated chicken feet. A natural source of glucosamine and chondroitin for healthy joints.',
-    image: '/images/12pknew.png',
+   image: '/images/12pknew.png',
     benefits: [
       { icon: Bone, text: 'Natural Glucosamine & Chondroitin for Joint Support' },
       { icon: Smile, text: 'Promotes Dental Hygiene through Chewing Action' },
@@ -113,7 +113,7 @@ const PRODUCTS: Product[] = [
         title: 'Locally Sourced',
         description: 'Supporting local Sri Lankan farmers while ensuring the shortest supply chain for maximum freshness.',
         icon: MapPin,
-        image: '/images/legs.png'
+         image: '/images/legs.png'
       },
       {
         step: '02',
@@ -121,7 +121,7 @@ const PRODUCTS: Product[] = [
         title: 'Low-Temp Air Dried',
         description: 'We dehydrate our treats at precise temperatures to preserve vital nutrients and enzymes without harsh additives.',
         icon: Wind,
-        image: '/images/henlegs.png'
+       image: '/images/henlegs.png'
       },
       {
         step: '03',
@@ -142,7 +142,7 @@ const PRODUCTS: Product[] = [
     id: 'collagen',
     name: 'Beef Collagen',
     description: 'Premium liquid collagen for dogs. Supports skin elasticity, coat shine, and joint mobility.',
-    image: '/images/soon.png',
+   image: '/images/soon.png',
     benefits: [
       { icon: Zap, text: 'Improves Skin Elasticity & Coat Shine' },
       { icon: Shield, text: 'Supports Healthy Gut Lining' },
@@ -164,7 +164,7 @@ const PRODUCTS: Product[] = [
         title: 'Small Batch Extraction',
         description: 'Simmered slowly at low temperatures to preserve the delicate peptide structures of the collagen.',
         icon: Sparkles,
-        image: '/images/14.jpg'
+       image: '/images/14.jpg'
       },
       {
         step: '03',
@@ -172,7 +172,7 @@ const PRODUCTS: Product[] = [
         title: 'Triple Filtration',
         description: 'Fine filtration ensures a smooth, highly concentrated liquid collagen free from any sediment or additives.',
         icon: Shield,
-        image: '/images/beaf.jpeg'
+       image: '/images/beaf.jpeg'
       }
     ],
     options: [
@@ -214,21 +214,59 @@ const PRODUCTS: Product[] = [
         title: 'Fresh Dehydration',
         description: 'Cold-air dehydration locks in nutrition without compromising the high-value flavor profile.',
         icon: Wind,
-        image: '/images/17.jpg'
+         image: '/images/17.jpg'
       }
     ],
     options: [
-      { size: '50g Bag', price: 399, image: '/images/soon.png' },
+       { size: '50g Bag', price: 399, image: '/images/soon.png' },
       { size: '100g Bag', price: 699, image: '/images/soon.png' },
       { size: '250g Bag', price: 1499, image: '/images/soon.png' }
     ]
   }
 ];
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Why Subscribe Component with Interactive Graphical View
 const WhySubscribe = () => {
-  const [estimateFoodPrice, setEstimateFoodPrice] = useState(15000);
+  const [estimateFoodPrice, setEstimateFoodPrice] = useState(15000); // Default estimate monthly budget in LKR
   
+  // Calculate yearly costs:
+  // Assume 12 orders a year
+  // One-off delivery estimate: LKR 800 per delivery
   const deliveryCostPerOrder = 800;
   const yearlyOneOff = (estimateFoodPrice * 12) + (deliveryCostPerOrder * 12);
   const yearlyMonthly = (estimateFoodPrice * 0.95 * 12);
@@ -288,6 +326,7 @@ const WhySubscribe = () => {
               <h3 className="text-3xl font-serif italic text-emerald-950">Yearly Value Calculator</h3>
             </div>
             
+            {/* Input Slider for Monthly Budget */}
             <div className="space-y-4">
               <div className="flex justify-between text-base font-semibold">
                 <span className="text-gray-600">Monthly Pet Food Expense:</span>
@@ -309,7 +348,9 @@ const WhySubscribe = () => {
               </div>
             </div>
 
+            {/* Graphical Visualization Bars */}
             <div className="space-y-6 pt-6 border-t border-brand-border">
+              {/* One-off Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm font-semibold">
                   <span className="text-gray-600">One-off Orders (12 Months)</span>
@@ -327,6 +368,7 @@ const WhySubscribe = () => {
                 </div>
               </div>
 
+              {/* Monthly Sub Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm font-semibold">
                   <div className="flex items-center gap-1.5 flex-wrap">
@@ -348,6 +390,7 @@ const WhySubscribe = () => {
                 </div>
               </div>
 
+              {/* Annual Sub Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm font-semibold">
                   <div className="flex items-center gap-1.5 flex-wrap">
@@ -370,6 +413,7 @@ const WhySubscribe = () => {
               </div>
             </div>
 
+            {/* Subtle disclaimer */}
             <p className="text-xs text-gray-500 font-normal italic leading-relaxed text-center">
               *Calculated based on estimated average pet feeding cycles consisting of 12 orders per year with an estimated local shipping charge of LKR 800 per shipment. Subscriptions enjoy free delivery on all shipments no matter the intervals (20d, 45d, 60d).
             </p>
@@ -397,19 +441,9 @@ export default function App() {
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
 
-  // ✅ FIX: Auth state listener with proper cleanup
   useEffect(() => {
-    let unsubOrders: (() => void) | null = null;
-
-    const unsubAuth = onAuthStateChanged(auth, (u) => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
-
-      // Cleanup previous order listener if exists
-      if (unsubOrders) {
-        unsubOrders();
-        unsubOrders = null;
-      }
-
       if (u) {
         setIsLoadingOrders(true);
         const q = query(
@@ -417,23 +451,18 @@ export default function App() {
           where('userId', '==', u.uid),
           orderBy('createdAt', 'desc')
         );
-        unsubOrders = onSnapshot(q, (snapshot) => {
-          setOrders(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+        const unsubOrders = onSnapshot(q, (snapshot) => {
+          setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
           setIsLoadingOrders(false);
         }, (error) => {
           handleFirestoreError(error, OperationType.LIST, 'orders');
-          setIsLoadingOrders(false);
         });
+        return unsubOrders;
       } else {
         setOrders([]);
-        setIsLoadingOrders(false);
       }
     });
-
-    return () => {
-      unsubAuth();
-      if (unsubOrders) unsubOrders();
-    };
+    return () => unsubscribe();
   }, []);
 
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'info' | 'payment' | 'success'>('cart');
@@ -483,18 +512,11 @@ export default function App() {
     setCheckoutStep('cart');
   };
 
-  // ✅ FIX: handleCheckout with proper sign-in flow
   const handleCheckout = async () => {
     if (!user) {
-      try {
-        const result = await signInWithGoogle();
-        if (!result) return;
-        // User signed in — let them click again to proceed
-        return;
-      } catch (error) {
-        console.error('Sign in failed:', error);
-        return;
-      }
+      const result = await signInWithGoogle();
+      if (!result) return;
+      return; // User is now signed in, allow them to click again or continue
     }
 
     if (checkoutStep === 'cart') {
@@ -506,6 +528,7 @@ export default function App() {
       }
       setCheckoutStep('payment');
     } else if (checkoutStep === 'payment') {
+      // Create Order in Firestore
       try {
         const orderData = {
           userId: user.uid,
@@ -536,6 +559,7 @@ export default function App() {
         receiptTimestamp: serverTimestamp()
       });
 
+      // Send Email Notification to Admin
       await fetch('/api/notify-admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -555,7 +579,7 @@ export default function App() {
   };
 
   const updateQuantity = (itemId: string, size: string, delta: number, isSub: boolean, freq?: number) => {
-    setCart(prev => prev.map(item => {
+    setCart(cart.map(item => {
       if (item.id === itemId && item.size === size && item.isSubscription === isSub && item.frequency === freq) {
         const newQty = Math.max(0, item.quantity + delta);
         return newQty === 0 ? null : { ...item, quantity: newQty };
@@ -570,7 +594,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-brand-bg text-[#1a1a1a] flex selection:bg-emerald-100">
-      {/* Left Sidebar */}
+      {/* Left Sidebar - Brand Identity */}
       <aside className="fixed left-0 top-0 bottom-0 w-16 border-r border-brand-border hidden lg:flex flex-col items-center py-12 justify-between z-40 bg-brand-bg">
         <div className="[writing-mode:vertical-rl] rotate-180 text-xs tracking-[0.3em] font-semibold text-gray-500 uppercase">
           Artisanal Pet Nutrition
@@ -586,16 +610,16 @@ export default function App() {
         {/* Navigation */}
         <nav className="h-20 flex items-center justify-between px-8 md:px-16 border-b border-brand-border bg-brand-bg/80 backdrop-blur-sm sticky top-0 z-30">
           <div className="flex items-center gap-6">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="hover:opacity-80 transition-opacity flex items-center py-1"
-            >
-              <img
-                src="/images/logo.png"
-                alt="HALOA Logo"
-                className="h-12 md:h-16 w-auto"
-              />
-            </button>
+           <button
+  onClick={() => setCurrentView('home')}
+  className="hover:opacity-80 transition-opacity flex items-center py-1"
+>
+  <img
+    src="/images/logo.png"
+    alt="HALOA Logo"
+    className="h-12 md:h-16 w-auto"
+  />
+</button>
             <div className="hidden md:flex items-center gap-6 ml-8">
               <button 
                 onClick={() => setCurrentView('home')}
@@ -1036,22 +1060,22 @@ export default function App() {
                             </div>
                           </div>
                           {subscriptionType !== 'none' && (
-                            <div className="flex items-center gap-3 bg-brand-bg p-3 rounded-lg border border-brand-border h-fit my-auto">
-                              <span className="text-xs md:text-sm uppercase tracking-widest font-bold text-gray-500">Interval:</span>
-                              <div className="flex gap-1.5">
-                                {[20, 45, 60].map(days => (
-                                  <button
-                                    key={days}
-                                    onClick={() => setSubFrequency(days)}
-                                    className={`py-1.5 px-3.5 text-xs font-bold uppercase tracking-widest transition-all rounded ${
-                                      subFrequency === days ? 'bg-emerald-800 text-white' : 'text-gray-455 hover:bg-gray-50'
-                                    }`}
-                                  >
-                                    {days}d
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
+                             <div className="flex items-center gap-3 bg-brand-bg p-3 rounded-lg border border-brand-border h-fit my-auto">
+                               <span className="text-xs md:text-sm uppercase tracking-widest font-bold text-gray-500">Interval:</span>
+                               <div className="flex gap-1.5">
+                                 {[20, 45, 60].map(days => (
+                                   <button
+                                     key={days}
+                                     onClick={() => setSubFrequency(days)}
+                                     className={`py-1.5 px-3.5 text-xs font-bold uppercase tracking-widest transition-all rounded ${
+                                       subFrequency === days ? 'bg-emerald-800 text-white' : 'text-gray-455 hover:bg-gray-50'
+                                     }`}
+                                   >
+                                     {days}d
+                                   </button>
+                                 ))}
+                               </div>
+                             </div>
                           )}
                         </div>
                       </div>
@@ -1200,6 +1224,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
+
         {/* Footer */}
         <footer className="p-8 md:p-16 lg:p-24 flex flex-col md:flex-row justify-between items-center sm:items-end gap-12 border-t border-brand-border bg-white">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
@@ -1217,7 +1242,7 @@ export default function App() {
         </footer>
       </div>
 
-      {/* Shopping Cart Drawer */}
+      {/* Shopping Cart Drawer (Preserved Logic, Re-Styled) */}
       <AnimatePresence>
         {isCartOpen && (
           <>
@@ -1251,7 +1276,7 @@ export default function App() {
                 {checkoutStep === 'cart' ? (
                   <div className="space-y-8">
                     {cart.length === 0 ? (
-                      <div className="h-full flex flex-col items-center justify-center text-center opacity-30 space-y-4 pt-20">
+                       <div className="h-full flex flex-col items-center justify-center text-center opacity-30 space-y-4 pt-20">
                         <ShoppingBag className="w-12 h-12" />
                         <p className="font-serif italic text-2xl">Your bag is empty</p>
                         <button 
@@ -1313,31 +1338,31 @@ export default function App() {
                       <div className="group">
                         <label className="block text-xs md:text-sm uppercase tracking-widest font-extrabold text-gray-500 mb-2 group-focus-within:text-emerald-800 transition-colors">Recipient</label>
                         <input 
-                          type="text" 
-                          value={contactInfo.name}
-                          onChange={(e) => setContactInfo({ ...contactInfo, name: e.target.value })}
-                          className="w-full bg-brand-bg border-b border-brand-border py-2 focus:outline-none focus:border-emerald-800 transition-colors text-lg font-serif italic"
-                          placeholder="Your Name"
+                           type="text" 
+                           value={contactInfo.name}
+                           onChange={(e) => setContactInfo({ ...contactInfo, name: e.target.value })}
+                           className="w-full bg-brand-bg border-b border-brand-border py-2 focus:outline-none focus:border-emerald-800 transition-colors text-lg font-serif italic"
+                           placeholder="Your Name"
                         />
                       </div>
                       <div className="group">
                         <label className="block text-xs md:text-sm uppercase tracking-widest font-extrabold text-gray-500 mb-2 group-focus-within:text-emerald-800 transition-colors">Contact</label>
                         <input 
-                          type="tel" 
-                          value={contactInfo.phone}
-                          onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
-                          className="w-full bg-brand-bg border-b border-brand-border py-2 focus:outline-none focus:border-emerald-800 transition-colors text-lg font-serif italic"
-                          placeholder="077 XXXXXXX"
+                           type="tel" 
+                           value={contactInfo.phone}
+                           onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                           className="w-full bg-brand-bg border-b border-brand-border py-2 focus:outline-none focus:border-emerald-800 transition-colors text-lg font-serif italic"
+                           placeholder="077 XXXXXXX"
                         />
                       </div>
                       <div className="group">
                         <label className="block text-xs md:text-sm uppercase tracking-widest font-extrabold text-gray-500 mb-2 group-focus-within:text-emerald-800 transition-colors">Address</label>
                         <textarea 
-                          rows={2}
-                          value={contactInfo.address}
-                          onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
-                          className="w-full bg-brand-bg border-b border-brand-border py-2 focus:outline-none focus:border-emerald-800 transition-colors text-lg font-serif italic resize-none"
-                          placeholder="Your street address"
+                           rows={2}
+                           value={contactInfo.address}
+                           onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
+                           className="w-full bg-brand-bg border-b border-brand-border py-2 focus:outline-none focus:border-emerald-800 transition-colors text-lg font-serif italic resize-none"
+                           placeholder="Your street address"
                         />
                       </div>
                     </div>
@@ -1475,3 +1500,4 @@ export default function App() {
     </div>
   );
 }
+
