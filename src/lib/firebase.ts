@@ -1,6 +1,23 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { getFirestore, collection, addDoc, updateDoc, doc, query, where, onSnapshot, serverTimestamp, getDocFromServer } from 'firebase/firestore';
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithRedirect, 
+  getRedirectResult,
+  signOut 
+} from 'firebase/auth';
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  updateDoc, 
+  doc, 
+  query, 
+  where, 
+  onSnapshot, 
+  serverTimestamp, 
+  getDocFromServer 
+} from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
@@ -20,23 +37,25 @@ async function testConnection() {
 }
 testConnection();
 
-// Auth helper
-let isSigningIn = false;
+// Auth helper - Redirect method (Popup க்கு பதிலாக)
 export const signInWithGoogle = async () => {
-  if (isSigningIn) return;
-  isSigningIn = true;
   try {
-    return await signInWithPopup(auth, googleProvider);
+    await signInWithRedirect(auth, googleProvider);
   } catch (error: any) {
-    if (error.code === 'auth/cancelled-popup-request' || error.code === 'auth/popup-closed-by-user') {
-      console.warn('Sign-in popup closed or cancelled.');
-      return null;
-    }
     throw error;
-  } finally {
-    isSigningIn = false;
   }
 };
+
+// App load ஆகும்போது redirect result check செய்யும்
+export const getGoogleRedirectResult = async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    return result;
+  } catch (error: any) {
+    throw error;
+  }
+};
+
 export const logOut = () => signOut(auth);
 
 // Firestore operation error handler helper
