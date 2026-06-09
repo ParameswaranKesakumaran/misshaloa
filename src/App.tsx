@@ -37,7 +37,6 @@ import {
   auth, 
   db, 
   signInWithGoogle, 
-  getGoogleRedirectResult,
   logOut, 
   handleFirestoreError, 
   OperationType 
@@ -398,11 +397,6 @@ export default function App() {
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
 
-  // ✅ FIX 1: Redirect result check - page load ஆகும்போது run ஆகும்
-  useEffect(() => {
-    getGoogleRedirectResult().catch(console.error);
-  }, []);
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -474,10 +468,10 @@ export default function App() {
     setCheckoutStep('cart');
   };
 
-  // ✅ FIX 2: handleCheckout - signInWithGoogle redirect, result return ஆகாது
   const handleCheckout = async () => {
     if (!user) {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      if (!result) return;
       return;
     }
 
@@ -908,11 +902,14 @@ export default function App() {
 
                 <div className="space-y-32">
                   {PRODUCTS.map((product) => {
+                    // ─── FIX: derive the active image from selectedSizes ───
                     const activeIdx = selectedSizes[product.id] ?? 0;
-                    const activeImage = product.options[activeIdx]?.image || product.image;
+                    const activeImage =
+                      product.options[activeIdx]?.image || product.image;
 
                     return (
                       <div key={product.id} className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                        {/* ── LEFT: Big reactive image ── */}
                         <div className="lg:col-span-6 relative">
                           <div className="aspect-[4/5] bg-brand-bg border border-brand-border overflow-hidden relative shadow-sm">
                             <AnimatePresence mode="wait">
@@ -931,6 +928,7 @@ export default function App() {
                           </div>
                         </div>
 
+                        {/* ── RIGHT: Details & size selector ── */}
                         <div className="lg:col-span-6">
                           <h3 className="text-5xl font-serif mb-6 italic">{product.name}</h3>
                           <p className="text-xl text-gray-500 font-light mb-10 leading-relaxed max-w-lg">{product.description}</p>
@@ -1110,12 +1108,14 @@ export default function App() {
                   <div className="space-y-12">
                     {orders.map((order) => (
                       <div key={order.id} className="bg-white border border-brand-border rounded-[2rem] overflow-hidden shadow-sm group">
+                        {/* Order Header */}
                         <div className="p-8 bg-brand-bg flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-brand-border">
                           <div>
                             <span className="text-xs uppercase tracking-widest font-bold text-gray-550 block mb-1">Order ID: {order.id.slice(0, 8)}</span>
                             <span className="text-base font-semibold">{new Date(order.createdAt?.seconds * 1000).toLocaleDateString()} — LKR {order.total.toLocaleString()}</span>
                           </div>
                           
+                          {/* Order Status Timeline */}
                           <div className="flex items-center gap-8">
                             {[
                               { label: 'Packed', status: 'packed', icon: Package },
@@ -1140,6 +1140,7 @@ export default function App() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                          {/* Items List */}
                           <div className="p-8 border-b md:border-b-0 md:border-r border-brand-border">
                             <span className="text-xs uppercase tracking-widest font-bold text-emerald-800 block mb-6">Items</span>
                             <div className="space-y-4">
@@ -1152,6 +1153,7 @@ export default function App() {
                             </div>
                           </div>
 
+                          {/* Payment Receipt Upload */}
                           <div className="p-8 border-b md:border-b-0 md:border-r border-brand-border bg-emerald-900/5">
                             <span className="text-xs uppercase tracking-widest font-bold text-emerald-800 block mb-6">Payment Receipt</span>
                             {order.paymentReceipt ? (
@@ -1181,6 +1183,7 @@ export default function App() {
                             )}
                           </div>
 
+                          {/* Contact Info */}
                           <div className="p-8">
                             <span className="text-xs uppercase tracking-widest font-bold text-emerald-850 block mb-6">Delivery Details</span>
                             <div className="space-y-2 italic text-sm text-gray-650">
